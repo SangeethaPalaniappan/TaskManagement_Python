@@ -5,6 +5,17 @@ from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 from TaskManagement.models import Task, Users
 
+@csrf_exempt
+def update_task(request, user_id, task_id):
+    if request.method == "PUT":
+        print("Get Inside")
+        data = json.loads(request.body)
+        task_exist = Task.objects.filter(user_id=user_id, id=task_id).exists()
+        if task_exist == True:
+            update = Task.objects.filter(user_id=user_id, id=task_id).update(status = data['status'])
+            return JsonResponse({"msg" : update})
+        else:
+            return JsonResponse({"msg" : "No user_id found"})
 
 
 @csrf_exempt
