@@ -16,8 +16,6 @@ def update_task(request, user_id, task_id):
         data = json.loads(request.body)
 
         try:    
-            task_exist = get_object_or_404(Task, user_id=user_id, id = task_id)
-        
             Task.objects.filter(user_id=user_id, id=task_id).update(status = data['status'])
             return JsonResponse({"status" : 1})
         except Exception:
@@ -25,24 +23,24 @@ def update_task(request, user_id, task_id):
         
     elif request.method == "GET":
         try:
-            task_exist = get_object_or_404(Task, user_id=user_id, id = task_id)
+            task = get_object_or_404(Task, user_id=user_id, id = task_id)
 
-            detail = {
-                'id' : task_exist.id,
-                'title': task_exist.title,
-                'description': task_exist.description,
-                'due_date': task_exist.due_date,
-                'status': task_exist.status,
-                'user_id': task_exist.user_id
+            details = {
+                'id' : task.id,
+                'title': task.title,
+                'description': task.description,
+                'due_date': task.due_date,
+                'status': task.status,
+                'user_id': task.user_id
             }
-            return JsonResponse({"status" : 1, "data" : detail})
+            return JsonResponse({"status" : 1, "data" : details})
         except Exception as e:
             return JsonResponse({"status" : 0, "msg" :  str(e)})
     
     elif request.method == "DELETE":
         try:
-            task_exist = get_object_or_404(Task, user_id=user_id, id = task_id)
-            task_exist.delete()
+            task = get_object_or_404(Task, user_id=user_id, id = task_id)
+            task.delete()
             return JsonResponse({"status" : 1})
         except Exception as e:
             return JsonResponse({"status" : 0, "msg" :  str(e)})
@@ -50,7 +48,7 @@ def update_task(request, user_id, task_id):
 
 
 @csrf_exempt
-def create_task(request, user_id):
+def task_creation_updation(request, user_id):
 
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -72,7 +70,6 @@ def create_task(request, user_id):
             arr = [model_to_dict(i) for i in user_id]
             
             if len(arr) >= 1:
-
                 return JsonResponse({"status" : 1, "data" : arr})
             else:
                 return JsonResponse({"status" : 0, 'msg' : "User_id not found"})  
