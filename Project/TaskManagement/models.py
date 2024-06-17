@@ -3,10 +3,15 @@ from django.db import models
 # Create your models here.
 
 class Task(models.Model):
+    status_options = {
+        0 : "To do",
+        1 : "In Progress",
+        2 : "Done"
+    }
     title = models.CharField(max_length=20)
     description = models.CharField(max_length=200)
     due_date = models.DateTimeField()
-    status = models.CharField(max_length=15)
+    status = models.IntegerField(default=0, choices=status_options)
     user_id = models.IntegerField(null=False)
     
     class Meta:
