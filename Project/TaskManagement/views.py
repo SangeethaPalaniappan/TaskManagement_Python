@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 # Create your views here.
 from TaskManagement.models import Task, Users
-from django.core.serializers import serialize
+
 from django.forms.models import model_to_dict
 
 
@@ -18,7 +18,7 @@ def update_task(request, user_id, task_id):
         try:    
             task_exist = get_object_or_404(Task, user_id=user_id, id = task_id)
         
-            update = Task.objects.filter(user_id=user_id, id=task_id).update(status = data['status'])
+            Task.objects.filter(user_id=user_id, id=task_id).update(status = data['status'])
             return JsonResponse({"status" : 1})
         except Exception:
             return JsonResponse({"status" : 0, "msg" : "No user_id found"})
@@ -70,10 +70,8 @@ def create_task(request, user_id):
         try:
             user_id = Task.objects.filter(user_id=user_id)
             arr = [model_to_dict(i) for i in user_id]
-
-            check = user_id.exists()
             
-            if check == True:
+            if len(arr) >= 1:
 
                 return JsonResponse({"status" : 1, "data" : arr})
             else:
